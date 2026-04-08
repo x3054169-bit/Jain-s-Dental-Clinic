@@ -116,12 +116,12 @@ const Navbar = () => {
 
 const Hero = () => {
   return (
-    <section className="relative min-h-[80vh] md:min-h-screen flex items-center pt-24 md:pt-20 overflow-hidden">
+    <section className="relative min-h-[80vh] md:min-h-screen flex flex-col justify-center pt-24 md:pt-20 overflow-hidden">
       {/* Background Elements */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-muted -z-10 rounded-l-[100px] hidden lg:block" />
       <div className="absolute top-[-10%] left-[-5%] w-[60%] md:w-[40%] h-[40%] bg-accent/10 blur-[80px] md:blur-[120px] rounded-full -z-10" />
       
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-8 md:gap-12 items-center mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -155,7 +155,7 @@ const Hero = () => {
               <div className="flex -space-x-2">
                 {[1,2,3].map(i => (
                   <div key={i} className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-muted flex items-center justify-center overflow-hidden">
-                    <img src={`https://picsum.photos/seed/user${i}/100/100`} alt="Patient" referrerPolicy="no-referrer" />
+                    <img src={`https://picsum.photos/seed/user${i}/100/100`} alt="Patient" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                 ))}
               </div>
@@ -182,6 +182,7 @@ const Hero = () => {
               alt="Jain's Dental Clinic" 
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               referrerPolicy="no-referrer"
+              loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />
             
@@ -203,6 +204,18 @@ const Hero = () => {
             </motion.div>
           </div>
         </motion.div>
+      </div>
+
+      {/* Trust Bar */}
+      <div className="max-w-7xl mx-auto px-6 w-full">
+        <div className="border-t border-muted pt-8 flex flex-wrap justify-center md:justify-between items-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+          {['ISO Certified', '25+ Years Experience', 'Modern Technology', 'Painless Dentistry'].map((text, i) => (
+            <div key={i} className="flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              <CheckCircle2 size={14} className="text-accent" />
+              {text}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -611,6 +624,31 @@ const WhatsAppButton = () => (
   </a>
 );
 
+const BackToTop = () => {
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => setIsVisible(window.scrollY > 500);
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <motion.button
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: isVisible ? 1 : 0, scale: isVisible ? 1 : 0.5 }}
+      onClick={scrollToTop}
+      className="fixed bottom-24 right-6 z-50 w-12 h-12 bg-white border border-muted text-primary rounded-full flex items-center justify-center shadow-xl hover:bg-muted transition-all"
+    >
+      <ChevronRight size={24} className="-rotate-90" />
+    </motion.button>
+  );
+};
+
 // --- Main App ---
 
 export default function App() {
@@ -633,6 +671,7 @@ export default function App() {
 
   return (
     <div className="relative">
+      <div className="grain" />
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1 bg-accent z-[60] origin-left"
         style={{ scaleX }}
@@ -656,13 +695,20 @@ export default function App() {
                 { title: "Transparent", desc: "No hidden costs." },
                 { title: "Painless Care", desc: "Stress-free treatments." }
               ].map((item, i) => (
-                <div key={i} className="text-center p-4 md:p-8 glass rounded-2xl md:rounded-3xl">
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="text-center p-4 md:p-8 glass rounded-2xl md:rounded-3xl"
+                >
                   <div className="w-10 h-10 md:w-12 md:h-12 bg-accent/10 rounded-xl md:rounded-2xl flex items-center justify-center text-accent mx-auto mb-4 md:mb-6">
                     <CheckCircle2 size={20} md:size={24} />
                   </div>
                   <h4 className="font-bold text-primary text-sm md:text-base mb-1 md:mb-2">{item.title}</h4>
                   <p className="text-[10px] md:text-sm text-secondary">{item.desc}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
@@ -675,6 +721,7 @@ export default function App() {
       
       <Footer />
       <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
